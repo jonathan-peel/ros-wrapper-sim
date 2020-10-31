@@ -17,7 +17,9 @@ dt-exec Xvfb :1 -screen 0 1024x768x24 -ac +extension GLX +render -noreset
 export DISPLAY=:1
 
 # launching app
-dt-exec echo "This is an empty launch script. Update it to launch your application."
+roscore &
+sleep 5
+dt-exec rosrun ros_wrapper_sim_pkg ros_wrapper_sim_node.py
 
 
 # ----------------------------------------------------------------------------

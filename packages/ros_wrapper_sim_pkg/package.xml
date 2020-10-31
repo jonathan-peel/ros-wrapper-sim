@@ -1,0 +1,11 @@
+<package>
+  <name>ros_wrapper_sim_pkg</name>
+  <version>0.1.0</version>
+  <description>
+  For exercise 26.
+  </description>
+  <maintainer email="jonathan.n.peel@gmail.com">Jonathan Peel</maintainer>
+  <license>None</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+</package>
