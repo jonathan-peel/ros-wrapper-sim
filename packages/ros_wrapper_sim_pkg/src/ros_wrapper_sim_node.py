@@ -5,11 +5,11 @@ import rospy
 from duckietown.dtros import DTROS, NodeType
 from std_msgs.msg import String
 
-class MyPublisherNode(DTROS):
+class RosWrapperSimNode(DTROS):
 
     def __init__(self, node_name):
         # initialize the DTROS parent class
-        super(MyPublisherNode, self).__init__(node_name=node_name, node_type=NodeType.GENERIC)
+        super(RosWrapperSimNode, self).__init__(node_name=node_name, node_type=NodeType.GENERIC)
         # construct publisher
         self.pub = rospy.Publisher('chatter', String, queue_size=10)
 
@@ -24,7 +24,7 @@ class MyPublisherNode(DTROS):
 
 if __name__ == '__main__':
     # create the node
-    node = MyPublisherNode(node_name='my_publisher_node')
+    node = RosWrapperSimNode(node_name='ros_wrapper_sim_node')
     # run node
     node.run()
     # keep spinning
