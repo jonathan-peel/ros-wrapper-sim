@@ -10,8 +10,10 @@ class RosWrapperSimNode(DTROS):
     def __init__(self, node_name):
         # initialize the DTROS parent class
         super(RosWrapperSimNode, self).__init__(node_name=node_name, node_type=NodeType.GENERIC)
-        # construct publisher
+        # construct publisher as a object contained in self
         self.pub = rospy.Publisher('chatter', String, queue_size=10)
+        # construct subscriber
+        self.sub = rospy.Subscriber('chatter', String, self.callback)
 
     def run(self):
         # publish message every 1 second
@@ -21,6 +23,9 @@ class RosWrapperSimNode(DTROS):
             rospy.loginfo("Publishing message: '%s'" % message)
             self.pub.publish(message)
             rate.sleep()
+
+    def callback(self, data):
+        rospy.loginfo("Received message %s", data.data)
 
 if __name__ == '__main__':
     # create the node
