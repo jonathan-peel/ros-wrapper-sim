@@ -18,7 +18,7 @@ export DISPLAY=:1
 
 # launching app
 roscore &
-sleep 5
+sleep 4
 dt-exec rosrun ros_wrapper_sim_pkg ros_wrapper_sim_node.py
 
 

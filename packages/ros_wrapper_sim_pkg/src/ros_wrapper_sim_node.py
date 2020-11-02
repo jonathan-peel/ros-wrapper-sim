@@ -36,8 +36,11 @@ class RosWrapperSimNode(DTROS):
             rate.sleep()
 
     def wheel_commands_callback(self, data):
-        # function gets called when sub receives a message, data
-        rospy.loginfo("Received message %s", data.data)
+        # function gets called when sub receives a message containing 'data'
+        rospy.loginfo("Received message %s", data)
+        self.vel_left = data.vel_left
+        self.vel_right = data.vel_right
+
 
 if __name__ == '__main__':
     # create the node
