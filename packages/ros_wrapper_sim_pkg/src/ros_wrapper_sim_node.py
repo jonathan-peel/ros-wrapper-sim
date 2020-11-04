@@ -46,10 +46,6 @@ class RosWrapperSimNode(DTROS):
         rospy.loginfo("Received message:\n%s", data)
         self.action = [data.vel_left, data.vel_right]
 
-    def publish_image(self, observation):
-        # to do!
-        pass
-
     def run(self):
         # publish image 16 times per second
         rate = rospy.Rate(16) 
