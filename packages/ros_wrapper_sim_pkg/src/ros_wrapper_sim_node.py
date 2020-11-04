@@ -2,8 +2,12 @@
 
 import os
 import rospy
+import cv2
+import numpy as np
 from duckietown.dtros import DTROS, NodeType
 from std_msgs.msg import String
+from sensor_msgs.msg import CompressedImage
+from sensor_msgs.msg import CameraInfo
 from duckietown_msgs.msg import WheelsCmdStamped
 import gym_duckietown
 from gym_duckietown.simulator import Simulator
@@ -19,14 +23,20 @@ class RosWrapperSimNode(DTROS):
         vehicle_name = os.environ.get('VEHICLE_NAME', 'default_vehicle')
         rospy.loginfo("Vehicle name is %s" % vehicle_name)
 
-        # construct publisher
+        # construct image publisher
+        image_topic = "/%s/camera_node/image/compressed" % vehicle_name
+        self.image_pub = rospy.Publisher(image_topic, CompressedImage, queue_size=10)
+        rospy.loginfo("Publisher set to %s" % image_topic)
+        # construct camera_info publisher
+        camera_info_topic = "/%s/camera_node/camera_info" % vehicle_name
+        self.info_pub = rospy.Publisher(camera_info_topic, CameraInfo, queue_size=10)
+        rospy.loginfo("Publisher set to %s" % camera_info_topic)
         
-        self.pub = rospy.Publisher('chatter', String, queue_size=10)
-        
+
         # construct subscriber
         wheels_command_topic = "/%s/wheels_driver_node/wheels_cmd" % vehicle_name
         self.wheels_command_sub = rospy.Subscriber(wheels_command_topic, WheelsCmdStamped, self.wheel_commands_callback)
-        rospy.loginfo("Subscribing to %s" % wheels_command_topic)
+        rospy.loginfo("Subscribed to %s" % wheels_command_topic)
 
         # initialise action
         self.action = [0, 0]
@@ -47,12 +57,20 @@ class RosWrapperSimNode(DTROS):
         while not rospy.is_shutdown():
             observation, reward, done, _ = env.step(self.action)
             env.render()
-
             if done:
                 observation = env.reset()
 
             # publish image to image topic
-            self.publish_image(observation) # to do
+            image_msg = CompressedImage()
+            image_msg.header.stamp = rospy.Time.now()
+            image_msg.format = "jpeg"
+            image = cv2.cvtColor(np.ascontiguousarray(observation), cv2.COLOR_BGR2RGB)
+            image_msg.data = np.array(cv2.imencode('.jpg', image)[1]).tostring()
+            self.image_pub.publish(image_msg)
+
+            # publish camera info to camera info topic
+            self.info_pub.publish(CameraInfo())
+
             rate.sleep()
 
 
